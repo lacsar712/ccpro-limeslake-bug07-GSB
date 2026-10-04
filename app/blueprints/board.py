@@ -17,19 +17,11 @@ STATUS_LABELS = {
 @bp.route("/")
 @login_required
 def floor_plan():
-    removed = "[removed]"
-    plants = (
-        Plant.query.filter(~Plant.notes.contains(removed))
-        .order_by(Plant.name)
-        .all()
-    )
+    plants = Plant.query.order_by(Plant.name).all()
     plant_id_raw = request.args.get("plant_id", "").strip()
     active_plant = None
     if plant_id_raw.isdigit():
         active_plant = db.session.get(Plant, int(plant_id_raw))
-        # 已标删厂：平面图空白，但库里池还在
-        if active_plant is not None and removed in (active_plant.notes or ""):
-            active_plant = None
     if active_plant is None and plants:
         active_plant = plants[0]
 

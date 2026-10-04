@@ -31,7 +31,7 @@ def create_app() -> Flask:
     from app.blueprints.board import bp as board_bp
     from app.blueprints.batches import bp as batches_bp
     from app.blueprints.ponds import bp as ponds_bp
-from app.blueprints.plants import bp as plants_bp
+    from app.blueprints.plants import bp as plants_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(board_bp)
@@ -49,6 +49,18 @@ from app.blueprints.plants import bp as plants_bp
         return redirect(url_for("auth.login"))
 
     return app
+
+
+def purge_soft_deleted_plants() -> int:
+    """一次性清理旧版假删：把带 [removed] 标记的厂区物理删除，
+    级联带走其下全部熟化池与批次，避免孤儿数据在各入口重现。"""
+    from app.models import Plant
+
+    stale = Plant.query.filter(Plant.notes.contains("[removed]")).all()
+    for plant in stale:
+        db.session.delete(plant)
+    db.session.commit()
+    return len(stale)
 
 
 def seed_demo_data() -> None:

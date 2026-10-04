@@ -29,12 +29,15 @@ else:
 PY
 
 python << 'PY'
-from app import create_app, seed_demo_data
+from app import create_app, purge_soft_deleted_plants, seed_demo_data
 from app.extensions import db
 
 app = create_app()
 with app.app_context():
     db.create_all()
+    purged = purge_soft_deleted_plants()
+    if purged:
+        print(f"purged {purged} soft-deleted plant(s)")
     seed_demo_data()
     print("migrate/seed done")
 PY

@@ -6,15 +6,15 @@ services:
       POSTGRES_USER: limeslake
       POSTGRES_PASSWORD: limeslake
     ports:
-      - "6660:5432"
+      - "6670:5432"
     volumes:
-      - limeslake_5260_6660_pg:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U limeslake -d limeslake"]
-      interval: 5s
-      timeout: 5s
-      retries: 30
-      start_period: 40s
+      - limeslake_5270_6670_pg:/var/lib/postgresql/data
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U limeslake -d limeslake"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 30
+    #   start_period: 40s
 
   web:
     build: .
@@ -22,12 +22,11 @@ services:
       SECRET_KEY: limeslake-dev-secret
       DATABASE_URL: postgresql+psycopg2://limeslake:limeslake@db:5432/limeslake
     ports:
-      - "5260:8000"
+      - "5270:8000"
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     volumes:
       - .:/app
 
 volumes:
-  limeslake_5260_6660_pg:
+  limeslake_5270_6670_pg:

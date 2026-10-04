@@ -34,7 +34,11 @@ class Plant(db.Model):
     notes = db.Column(db.Text, nullable=False, default="")
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow)
 
-    ponds = db.relationship("Pond", back_populates="plant", cascade="all, delete-orphan")
+    ponds = db.relationship(
+        "Pond",
+        back_populates="plant",
+        cascade="all, delete-orphan",
+    )
 
 
 class Pond(db.Model):
@@ -49,7 +53,11 @@ class Pond(db.Model):
     STATUS_CHOICES = (STATUS_FILLING, STATUS_SLAKING, STATUS_DRAWN)
 
     id = db.Column(db.Integer, primary_key=True)
-    plant_id = db.Column(db.Integer, db.ForeignKey("plants.id"), nullable=False)
+    plant_id = db.Column(
+        db.Integer,
+        db.ForeignKey("plants.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     code = db.Column(db.String(40), nullable=False)
     status = db.Column(db.String(20), nullable=False, default=STATUS_FILLING)
     capacity_m3 = db.Column(db.Float, nullable=False, default=0.0)
@@ -68,7 +76,11 @@ class SlakeBatch(db.Model):
     __tablename__ = "slake_batches"
 
     id = db.Column(db.Integer, primary_key=True)
-    pond_id = db.Column(db.Integer, db.ForeignKey("ponds.id"), nullable=False)
+    pond_id = db.Column(
+        db.Integer,
+        db.ForeignKey("ponds.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     started_at = db.Column(db.DateTime(timezone=True), nullable=False, default=utcnow)
     target_temp_c = db.Column(db.Float, nullable=False, default=80.0)
     peak_temp_c = db.Column(db.Float, nullable=True)

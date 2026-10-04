@@ -4,7 +4,7 @@
 <header class="page-head">
   <div>
     <h1>厂区</h1>
-    <p>删除厂区应带走池与批次；本页可验收假删残留。</p>
+    <p>删除厂区会在同一事务内带走其下全部熟化池与熟化批次，不可恢复。</p>
   </div>
 </header>
 <table class="data-table">
@@ -25,14 +25,10 @@
       <td>{{ plant.notes }}</td>
       <td>{{ plant.ponds|length }}</td>
       <td>
-        {% if removed_mark not in (plant.notes or '') %}
         <form method="post" action="{{ url_for('plants.delete_plant', plant_id=plant.id) }}"
-              onsubmit="return confirm('确认删除该厂区？')">
+              onsubmit="return confirm('确认删除该厂区？该厂区下全部熟化池与熟化批次将一并删除，且不可恢复。')">
           <button type="submit" class="btn ghost">删除</button>
         </form>
-        {% else %}
-        <span class="hint">已标删</span>
-        {% endif %}
       </td>
     </tr>
     {% else %}
