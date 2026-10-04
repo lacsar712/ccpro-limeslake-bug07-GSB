@@ -9,12 +9,12 @@ services:
       - "6660:5432"
     volumes:
       - limeslake_5260_6660_pg:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U limeslake -d limeslake"]
-      interval: 5s
-      timeout: 5s
-      retries: 30
-      start_period: 40s
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U limeslake -d limeslake"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 30
+    #   start_period: 40s
 
   web:
     build: .
@@ -24,8 +24,7 @@ services:
     ports:
       - "5260:8000"
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     volumes:
       - .:/app
 
