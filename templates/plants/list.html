@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}厂区{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>厂区</h1>
+    <p>删除厂区应带走池与批次；本页可验收假删残留。</p>
+  </div>
+</header>
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>位置</th>
+      <th>备注</th>
+      <th>池数</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for plant in plants %}
+    <tr>
+      <td>{{ plant.name }}</td>
+      <td>{{ plant.location }}</td>
+      <td>{{ plant.notes }}</td>
+      <td>{{ plant.ponds|length }}</td>
+      <td>
+        {% if removed_mark not in (plant.notes or '') %}
+        <form method="post" action="{{ url_for('plants.delete_plant', plant_id=plant.id) }}"
+              onsubmit="return confirm('确认删除该厂区？')">
+          <button type="submit" class="btn ghost">删除</button>
+        </form>
+        {% else %}
+        <span class="hint">已标删</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">暂无厂区</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
